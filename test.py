@@ -1,13 +1,14 @@
 import datetime
+from zoneinfo import ZoneInfo
 import time
 import streamlit as st
 import requests
 import pandas as pd
 from io import BytesIO
 
-# Function to display current date and time
+# Function to display current date and time in KST
 def display_current_date():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")
 
 # Streamlit page setup
 st.set_page_config(page_title="한미부동산", layout="wide")
@@ -85,79 +86,7 @@ def fetch_data_for_complex(complex_id):
 
     return all_articles
 
-# 드롭다운 메뉴를 위한 옵션 생성
-options = list(complex_ids.values())
-options.insert(0, "모든 단지")  # "모든 단지" 옵션 추가
-
-# 드롭다운 메뉴 생성
-selected_complex = st.selectbox(
-    "아파트 단지 선택",
-    options
-)
-
-# 데이터를 표시할 빈 컨테이너 생성
-data_container = st.empty()
-
 # 실시간 업데이트 루프
 while True:
-    # 새로고침 시간 업데이트
     refresh_time.text(f"마지막 업데이트: {display_current_date()}")
-
-    # 선택된 단지에 따라 데이터 표시
-    with data_container.container():
-        if selected_complex == "모든 단지":
-            # 모든 단지 데이터 가져오기
-            complex_data = {}
-            for complex_id in complex_ids:
-                complex_data[complex_id] = fetch_data_for_complex(complex_id)
-                
-            # 모든 단지 데이터 표시
-            for complex_id, data in complex_data.items():
-                if data:
-                    df = pd.DataFrame(data)
-                    df = df.rename(columns={"realtorName": "부동산", "articleName": "아파트", "tradeTypeName": "거래방식", "buildingName": "동", "floorInfo": "층수", "dealOrWarrantPrc": "가격", "areaName": "평형" })
-                    df_display = df[["부동산", "아파트", "거래방식", "동", "층수",
-                                    "가격", "평형", "direction", "articleConfirmYmd", "articleFeatureDesc",
-                                    "tagList", "articleNo", "sameAddrMaxPrc", "sameAddrMinPrc"]]
-                    
-                    st.write(f"### {complex_ids[complex_id]}")
-                    st.dataframe(df_display, height=300)  # 각 단지별로 높이 300px 설정
-                else:
-                    st.write(f"No data available for {complex_ids[complex_id]}")
-        else:
-            # 선택된 단지 ID 찾기
-            selected_id = None
-            for complex_id, name in complex_ids.items():
-                if name == selected_complex:
-                    selected_id = complex_id
-                    break
-            
-            if selected_id:
-                # 선택된 단지의 데이터만 가져오기
-                data = fetch_data_for_complex(selected_id)
-                
-                if data:
-                    df = pd.DataFrame(data)
-                    df = df.rename(columns={"realtorName": "부동산", "articleName": "아파트", "tradeTypeName": "거래방식", "buildingName": "동", "floorInfo": "층수", "dealOrWarrantPrc": "가격", "areaName": "평형" })
-                    df_display = df[["부동산", "아파트", "거래방식", "동", "층수",
-                                    "가격", "평형", "direction", "articleConfirmYmd", "articleFeatureDesc",
-                                    "tagList", "articleNo", "sameAddrMaxPrc", "sameAddrMinPrc"]]
-                    
-                    st.write(f"### {selected_complex}")
-                    
-                    # 단일 단지일 경우 더 큰 높이로 설정하여 스크롤 가능하게 함
-                    st.dataframe(df_display, height=600, use_container_width=True)
-                    
-                    # 데이터 통계 정보 표시
-                    st.write(f"총 매물 수: {len(df_display)}개")
-                    
-                    # 가격 정보가 숫자로 되어 있는지 확인하고, 숫자라면 통계 계산
-                    if df_display["가격"].dtype == 'float64' or df_display["가격"].dtype == 'int64':
-                        st.write(f"평균 가격: {df_display['가격'].mean():,.0f}만원")
-                        st.write(f"최저 가격: {df_display['가격'].min():,.0f}만원")
-                        st.write(f"최고 가격: {df_display['가격'].max():,.0f}만원")
-                else:
-                    st.write(f"No data available for {selected_complex}")
-
-    # 1분 대기
     time.sleep(60)
