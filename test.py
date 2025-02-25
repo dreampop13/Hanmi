@@ -57,17 +57,17 @@ headers = {
 # 아파트 단지 정보
 complex_ids = {
     101887: "반포리체",
-    # 112008: "반포래미안아이파크",
-    # 125080: "디에이치반포라클라스",
-    # 111687: "반포써밋",
-    # 444: "반포미도1차",
-    # 445: "반포미도2차",
+    112008: "반포래미안아이파크",
+    125080: "디에이치반포라클라스",
+    111687: "반포써밋",
+    444: "반포미도1차",
+    445: "반포미도2차",
 }
 
 # Function to get data from the API for a specific complex ID and page range
 def fetch_data_for_complex(complex_id):
     all_articles = []
-    for page in range(1, 5):  # Pages 1 to 30
+    for page in range(1, 30):  # Pages 1 to 30
         try:
             url = f'https://new.land.naver.com/api/articles/complex/{complex_id}?realEstateType=APT%3AABYG%3AJGC%3APRE&tradeType=&tag=%3A%3A%3A%3A%3A%3A%3A%3A&rentPriceMin=0&rentPriceMax=900000000&priceMin=0&priceMax=900000000&areaMin=0&areaMax=900000000&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&showArticle=false&sameAddressGroup=false&minMaintenanceCost&maxMaintenanceCost&priceType=RETAIL&directions=&page={page}&complexNo={complex_id}&buildingNos=&areaNos=&type=list&order=rank'
             
