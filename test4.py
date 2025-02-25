@@ -75,33 +75,40 @@ selected_complex = st.selectbox(
     options
 )
 
-# 데이터 새로고침 버튼
-if st.button("데이터 새로고침"):
-    if selected_complex == "모든 단지":
-        for complex_id in complex_ids:
-            if complex_id not in [item for item in list(crawling_queue.queue)]:
-                crawling_queue.put(complex_id)
-    else:
-        selected_id = next((id for id, info in complex_ids.items() if info["name"] == selected_complex), None)
-        if selected_id and selected_id not in [item for item in list(crawling_queue.queue)]:
-            crawling_queue.put(selected_id)
+# 데이터 새로고침 버튼 (첫 로딩 시 숨김)
+refresh_button = st.empty()
+refresh_clicked = False
 
-    st.success("데이터 새로고침이 예약되었습니다. 잠시 기다려주세요.")
+# 메인 UI 첫 로딩 시 바로 데이터 표시
+def initial_load():
+    global refresh_clicked
+    for complex_id in complex_ids:
+        if complex_id not in [item for item in list(crawling_queue.queue)]:
+            crawling_queue.put(complex_id)
+    refresh_clicked = True
+
+initial_load()
+
+# 새로고침 버튼 표시 (첫 로딩 이후에만 활성화)
+if refresh_clicked:
+    if refresh_button.button("데이터 새로고침"):
+        if selected_complex == "모든 단지":
+            for complex_id in complex_ids:
+                if complex_id not in [item for item in list(crawling_queue.queue)]:
+                    crawling_queue.put(complex_id)
+        else:
+            selected_id = next((id for id, info in complex_ids.items() if info["name"] == selected_complex), None)
+            if selected_id and selected_id not in [item for item in list(crawling_queue.queue)]:
+                crawling_queue.put(selected_id)
+
+        st.success("데이터 새로고침이 예약되었습니다. 잠시 기다려주세요.")
 
 # 데이터를 표시할 빈 컨테이너 생성
 data_container = st.empty()
 
-# 메인 UI 첫 로딩 시 바로 데이터 표시
-def initial_load():
-    for complex_id in complex_ids:
-        if complex_id not in [item for item in list(crawling_queue.queue)]:
-            crawling_queue.put(complex_id)
-
-initial_load()
-
 # 메인 UI 루프
 while True:
-    refresh_time.text(f"마지막 UI 업데이트: {display_current_date()}")
+    refresh_time.text(f"마지막 업데이트: {display_current_date()}")
 
     with data_container.container():
         if selected_complex == "모든 단지":
