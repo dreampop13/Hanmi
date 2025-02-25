@@ -67,7 +67,7 @@ complex_ids = {
 # Function to get data from the API for a specific complex ID and page range
 def fetch_data_for_complex(complex_id):
     all_articles = []
-    for page in range(1, 30):  # Pages 1 to 30
+    for page in range(1, 25):  # Pages 1 to 30
         try:
             url = f'https://new.land.naver.com/api/articles/complex/{complex_id}?realEstateType=APT%3AABYG%3AJGC%3APRE&tradeType=&tag=%3A%3A%3A%3A%3A%3A%3A%3A&rentPriceMin=0&rentPriceMax=900000000&priceMin=0&priceMax=900000000&areaMin=0&areaMax=900000000&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&showArticle=false&sameAddressGroup=false&minMaintenanceCost&maxMaintenanceCost&priceType=RETAIL&directions=&page={page}&complexNo={complex_id}&buildingNos=&areaNos=&type=list&order=rank'
             
@@ -89,4 +89,4 @@ def fetch_data_for_complex(complex_id):
 # 실시간 업데이트 루프
 while True:
     refresh_time.text(f"마지막 업데이트: {display_current_date()}")
-    time.sleep(60)
+    time.sleep(300)
