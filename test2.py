@@ -6,9 +6,9 @@ import requests
 import pandas as pd
 from io import BytesIO
 
-# Function to display current date and time
+# Function to display current date and time in KST
 def display_current_date():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")
 
 # Streamlit page setup
 st.set_page_config(page_title="한미부동산", layout="wide")
