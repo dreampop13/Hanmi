@@ -79,12 +79,11 @@ selected_complex = st.selectbox(
 refresh_button = st.empty()
 refresh_clicked = False
 
-# 메인 UI 첫 로딩 시 바로 데이터 표시
+# 메인 UI 첫 로딩 시 강제로 모든 단지 데이터를 한꺼번에 로딩
 def initial_load():
     global refresh_clicked
     for complex_id in complex_ids:
-        if complex_id not in [item for item in list(crawling_queue.queue)]:
-            crawling_queue.put(complex_id)
+        crawling_queue.put(complex_id)
     refresh_clicked = True
 
 initial_load()
