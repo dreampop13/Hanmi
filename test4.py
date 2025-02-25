@@ -9,7 +9,6 @@ from io import BytesIO
 import threading
 import queue
 import logging
-from fake_useragent import UserAgent
 import json
 
 # 로깅 설정
@@ -46,10 +45,23 @@ complex_ids = {
     445: {"name": "반포미도2차", "interval": 20},
 }
 
+# 미리 정의된 다양한 User-Agent 목록
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.70',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 16_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Mobile/15E148 Safari/604.1'
+]
+
 # 랜덤 User-Agent 생성 함수
 def get_random_user_agent():
-    ua = UserAgent()
-    return ua.random
+    return random.choice(USER_AGENTS)
 
 # 쿠키와 헤더를 랜덤화하는 함수
 def get_randomized_headers():
@@ -58,11 +70,11 @@ def get_randomized_headers():
         'nhn.realestate.article.rlet_type_cd': 'A01',
         'nhn.realestate.article.trade_type_cd': '""',
         'nhn.realestate.article.ipaddress_city': '1100000000',
-        'NAC': 'kfVVDAh6umRQB',
-        'NACT': '1',
-        '_fwb': f'164LrqEDbfsJMHWdPyHYrF6.{int(time.time() * 1000)}',
+        'NAC': f'kfVV{get_random_string(8)}',
+        'NACT': str(random.randint(1, 5)),
+        '_fwb': f'{get_random_string(12)}.{int(time.time() * 1000)}',
         'landHomeFlashUseYn': 'Y',
-        'NNB': 'BFLKCVA7OW6GO',
+        'NNB': f'{get_random_string(12)}',
         'SRT30': str(int(time.time())),
         'SHOW_FIN_BADGE': 'Y',
         'BNB_FINANCE_HOME_TOOLTIP_ESTATE': 'true',
@@ -81,8 +93,8 @@ def get_randomized_headers():
         'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         'authorization': f'Bearer {auth_token}',
         'priority': 'u=1, i',
-        'referer': f'https://new.land.naver.com/complexes/{random.choice(list(complex_ids.keys()))}',
-        'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+        'referer': f'https://new.land.naver.com/complexes/{random.choice(list(complex_ids.keys()))}?ms=37.503762,127.013485,17&a=APT:ABYG:JGC:PRE&e=RETAIL',
+        'sec-ch-ua': f'"Not(A:Brand";v="{random.randint(90, 99)}", "Google Chrome";v="{random.randint(100, 134)}", "Chromium";v="{random.randint(100, 134)}"',
         'sec-ch-ua-mobile': '?0',
         'sec-ch-ua-platform': '"Windows"',
         'sec-fetch-dest': 'empty',
@@ -93,9 +105,17 @@ def get_randomized_headers():
     
     return cookies, headers
 
+# 랜덤 문자열 생성 함수
+def get_random_string(length):
+    import string
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return ''.join(random.choice(chars) for _ in range(length))
+
 # 토큰 갱신 함수 (실제로는 네이버 로그인 후 토큰을 가져오는 로직이 필요)
 def get_auth_token():
     # 이 부분은 실제 구현 필요 - 현재는 하드코딩된 토큰 반환
+    # 임의의 토큰 형식 생성 (실제 네이버 토큰 가져오기가 필요)
+    # 실제로는 이 토큰이 만료되면 자동으로 갱신하는 로직이 필요합니다
     return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlJFQUxFU1RBVEUiLCJpYXQiOjE3NDA0MDczMzEsImV4cCI6MTc0MDQxODEzMX0.dsrTBt6XxqMxUWELrz4LOxkZmeD4e7cmjetg1k8AHqg"
 
 # Function to get data from the API for a specific complex ID and page range with randomized delays
