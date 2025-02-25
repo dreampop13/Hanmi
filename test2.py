@@ -122,7 +122,7 @@ while True:
                                     "tagList", "articleNo", "sameAddrMaxPrc", "sameAddrMinPrc"]]
                     
                     st.write(f"### {complex_ids[complex_id]}")
-                    st.dataframe(df_display, height=300)  # 각 단지별로 높이 300px 설정
+                    st.dataframe(df_display, height=600)  # 각 단지별로 높이 600px 설정
                 else:
                     st.write(f"No data available for {complex_ids[complex_id]}")
         else:
@@ -147,7 +147,7 @@ while True:
                     st.write(f"### {selected_complex}")
                     
                     # 단일 단지일 경우 더 큰 높이로 설정하여 스크롤 가능하게 함
-                    st.dataframe(df_display, height=900, use_container_width=True)
+                    st.dataframe(df_display, height=1200, use_container_width=True)
                     
                     # 데이터 통계 정보 표시
                     st.write(f"총 매물 수: {len(df_display)}개")
@@ -160,5 +160,5 @@ while True:
                 else:
                     st.write(f"No data available for {selected_complex}")
 
-    # 1분 대기
+    # 20분 대기
     time.sleep(1200)
