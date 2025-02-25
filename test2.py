@@ -147,7 +147,7 @@ while True:
                     st.write(f"### {selected_complex}")
                     
                     # 단일 단지일 경우 더 큰 높이로 설정하여 스크롤 가능하게 함
-                    st.dataframe(df_display, height=600, use_container_width=True)
+                    st.dataframe(df_display, height=900, use_container_width=True)
                     
                     # 데이터 통계 정보 표시
                     st.write(f"총 매물 수: {len(df_display)}개")
