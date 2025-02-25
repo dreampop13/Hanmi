@@ -160,4 +160,4 @@ while True:
                     st.write(f"No data available for {selected_complex}")
 
     # 1분 대기
-    time.sleep(60)
+    time.sleep(300)
